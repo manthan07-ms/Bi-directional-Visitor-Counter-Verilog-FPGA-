@@ -1,2 +1,103 @@
 # Bi-directional-Visitor-Counter-Verilog-FPGA-
-📌 Project OverviewThis project is a digital hardware design for a Bi-Directional Visitor Counter implemented in Verilog HDL. The system tracks the number of occupants in a room in real-time by monitoring entry and exit sensors. The count is processed using synchronous logic and displayed on a 3-digit 7-Segment Display (Range: 000 to 999).This design is synthesized using Intel Quartus II and targeted for FPGA development boards (e.g., Altera Cyclone IV).🚀 Key FeaturesBi-Directional Tracking: Simultaneously handles entry (increment) and exit (decrement) events.Synchronous Logic: Uses a master clock and a derived slow clock for stable edge detection.3-Digit Display: Capable of counting from 0 to 999.Active Low Logic: Designed to interface with standard Active-Low IR obstruction sensors.Common Anode Support: The 7-segment decoder is coded for Common Anode displays (0 = ON).🛠️ Technology StackLanguage: Verilog HDL (RTL Design)Synthesis Tool: Intel (Altera) Quartus IISimulation: ModelSim / QuestaSimHardware: FPGA Development Board (e.g., DE10-Lite, Cyclone series), IR Sensors.⚙️ Block Diagram & Architecture1. Clock DividerThe generic FPGA clock (often 50MHz) is too fast for direct human interaction handling.A 23-bit counter creates a slow_clock to stabilize sensor inputs and filter out noise (debouncing).2. Edge Detection LogicInstead of Level Triggering (which would count continuously while a person stands in front of the sensor), this design uses Edge Detection:The system compares the current sensor state with the previous state (pre_entry vs entry).The counter only updates on the falling edge (when the sensor beam is broken).3. Seven Segment DecoderConverts the integer count into Hundreds, Tens, and Ones.Maps these digits to 7-bit patterns specifically for Common Anode displays.📂 Code StructureInputs:clk: Master system clock.reset: Active high reset to zero the counter.entry: Sensor input (Active Low).exit: Sensor input (Active Low).Outputs:seg0: 7-bit signal for Unit place digit.seg1: 7-bit signal for Tens place digit.seg2: 7-bit signal for Hundreds place digit.📊 RTL Schematic (Logic Flow)Clock Generation $\rightarrow$ Generates slow_clock.Input Processing $\rightarrow$ Checks entry/exit pins on slow_clock edge.Arithmetic Unit $\rightarrow$ Updates count register (Increment/Decrement).Binary to BCD $\rightarrow$ Splits count into digits (% 10, / 10).Output Logic $\rightarrow$ Assigns 7-segment hex codes.🔧 Hardware Pin Mapping (Example for Altera DE1)SignalFPGA PinComponentclkPIN_P1150MHz ClockresetPIN_C10Push Button 0entryPIN_AB12GPIO / IR Sensor 1exitPIN_W12GPIO / IR Sensor 2seg0PIN_C14...7-Seg Display (Right)🚀 How to RunOpen Quartus II.Create a new project and add visitor_counter.v.Assign pins using the Pin Planner based on your specific FPGA board.Compile the design (Analysis & Synthesis).Upload the .sof file to the FPGA using the Programmer.🔮 Future ImprovementsAdd a Threshold Alarm (LED/Buzzer) when the room is full.Implement a Finite State Machine (FSM) for stricter sensor sequence checking.Add UART support to send the count to a PC/Cloud.Author: Manthan SabalparaConnect: LinkedIn
+📌 Project Overview
+
+This project implements a bidirectional visitor counter using Verilog HDL.
+It counts the number of people entering and exiting a room using two sensors and displays the total count on three 7-segment displays (hundreds, tens, ones).
+
+The design is suitable for implementation on FPGA boards such as Altera DE2 / Cyclone series.
+
+⚙️ Features
+
+✅ Bidirectional counting (Entry & Exit detection)
+✅ Maximum count: 999
+✅ Automatic decrement on exit
+✅ Three 7-segment display output
+✅ Slow clock generation for stable sensor reading
+✅ Reset functionality
+
+🧠 Working Principle
+
+Two inputs (entry and exit) act as IR sensors
+On a falling edge of entry, the count increments
+On a falling edge of exit, the count decrements
+A slow clock is generated internally using a counter to avoid false triggering
+The total count is split into:
+Hundreds digit
+Tens digit
+Ones digit
+Each digit is decoded and displayed on a 7-segment display
+
+🧩 Module Description
+Inputs
+
+Signal	  Description
+clk	    | Main FPGA clock
+reset	  | Resets the visitor count
+entry	  | Entry sensor input
+exit	  | Exit sensor input
+
+Outputs
+
+Signal	  Description
+seg0	  | Ones digit (7-segment)
+seg1	  | Tens digit (7-segment)
+seg2	  | Hundreds digit (7-segment)
+slow_clock	| Internally generated slow clock
+
+⏱️ Clock Divider
+A clock divider is implemented using a 23-bit counter to generate a slow clock (~human speed) for reliable sensor detection.
+
+if(counter == 5000000) begin
+    counter <= 0;
+    slow_clock <= ~slow_clock;
+end
+
+🔢 Count Range
+
+Minimum: 0
+Maximum: 999
+Count does not underflow or overflow
+
+📟 7-Segment Display Encoding
+
+Common-anode configuration
+Digits 0–9 are decoded using combinational logic
+Three displays show hundreds, tens, and ones
+
+🧪 Simulation & Testing
+
+Simulated using ModelSim
+Tested with push buttons as sensors
+Verified correct increment, decrement, and reset operation
+
+🛠️ Tools Used
+
+Verilog HDL
+Quartus II
+ModelSim
+FPGA Development Board (Altera DE2 / Cyclone)
+
+🚀 Applications
+
+Classroom or lab visitor counting
+Mall / office people counting
+Entry–exit monitoring systems
+FPGA learning & digital design practice
+
+📂 File Structure
+├── visitor_counter.v
+├── README.md
+
+🎥 Demo Video
+
+A short demonstration video showing entry, exit counting and 7-segment display operation is available here: 
+
+✍️ Author
+
+Manthan Sabalpara
+Electronics & Communication Engineering
+FPGA | Verilog | Digital Design
+
+📜 License
+
+This project is open-source and free to use for educational purposes.
