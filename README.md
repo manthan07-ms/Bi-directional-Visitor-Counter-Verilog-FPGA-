@@ -134,7 +134,9 @@ A short demonstration video showing entry, exit counting and 7-segment display o
 ✍️ Author
 
 Manthan Sabalpara
+
 Electronics & Communication Engineering
+
 FPGA | Verilog | Digital Design
 
 📜 License
